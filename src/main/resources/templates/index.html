@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cálculo de Comisiones</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #1e2130;
+            color: #e0e0e0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 60px 20px;
+        }
+
+        h1 {
+            font-size: 2.4rem;
+            font-weight: 700;
+            margin-bottom: 40px;
+            color: #ffffff;
+        }
+
+        /* Tarjeta del formulario */
+        .form-card {
+            background-color: #2b2f45;
+            border-radius: 10px;
+            padding: 28px 36px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            min-width: 340px;
+        }
+
+        .form-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .form-row label {
+            font-size: 0.95rem;
+            color: #b0b8d0;
+            white-space: nowrap;
+        }
+
+        .form-row input[type="date"] {
+            background-color: #3a3f58;
+            border: 1px solid #4a5070;
+            border-radius: 6px;
+            color: #e0e0e0;
+            padding: 7px 12px;
+            font-size: 0.92rem;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .form-row input[type="date"]:focus {
+            border-color: #4dc8e8;
+        }
+
+        /* Botón */
+        .btn-calcular {
+            background-color: #4dc8e8;
+            color: #1e2130;
+            border: none;
+            border-radius: 6px;
+            padding: 10px 0;
+            font-size: 0.97rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            width: 100%;
+            margin-top: 4px;
+        }
+
+        .btn-calcular:hover {
+            background-color: #38b8da;
+        }
+
+        /* Tabla de resultados */
+        .table-wrapper {
+            margin-top: 48px;
+            width: 100%;
+            max-width: 780px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+
+        thead tr {
+            background-color: #4dc8e8;
+            color: #1e2130;
+        }
+
+        thead th {
+            padding: 14px 20px;
+            text-align: left;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid #2b2f45;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #262a3d;
+        }
+
+        tbody td {
+            padding: 13px 20px;
+            color: #dde3f0;
+        }
+
+        /* Mensaje sin resultados */
+        .no-resultados {
+            margin-top: 32px;
+            color: #7a8099;
+            font-size: 0.95rem;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Cálculo de Comisiones</h1>
+
+    <form class="form-card" th:action="@{/calcular}" method="post">
+        <div class="form-row">
+            <label for="fechaInicio">Fecha Inicio:</label>
+            <input type="date" id="fechaInicio" name="fechaInicio"
+                   th:value="${fechaInicio}" required />
+        </div>
+        <div class="form-row">
+            <label for="fechaFin">Fecha Fin:</label>
+            <input type="date" id="fechaFin" name="fechaFin"
+                   th:value="${fechaFin}" required />
+        </div>
+        <button type="submit" class="btn-calcular">Calcular Comisiones</button>
+    </form>
+
+    <!-- Tabla solo aparece si hay resultados -->
+    <div class="table-wrapper" th:if="${resultados != null}">
+
+        <div class="no-resultados" th:if="${#lists.isEmpty(resultados)}">
+            No se encontraron ventas en el rango de fechas seleccionado.
+        </div>
+
+        <table th:if="${!#lists.isEmpty(resultados)}">
+            <thead>
+                <tr>
+                    <th>Vendedor</th>
+                    <th>Total Vendido</th>
+                    <th>Regla Aplicada</th>
+                    <th>Comisión Calculada</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="item : ${resultados}">
+                    <td th:text="${item.vendedor}"></td>
+                    <td th:text="${#numbers.formatDecimal(item.totalVendido, 1, 2)}"></td>
+                    <td th:text="${item.reglaAplicada}"></td>
+                    <td th:text="${#numbers.formatDecimal(item.comisionCalculada, 1, 4)}"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</body>
+</html>
