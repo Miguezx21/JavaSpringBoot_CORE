@@ -19,6 +19,7 @@ Aplicación web desarrollada en **Java Spring Boot** que calcula comisiones de v
 - Spring Data JPA
 - Thymeleaf (motor de plantillas)
 - H2 (base de datos en memoria)
+- Postgre SQL para memoria
 - Lombok
 - Maven
 - Docker
